@@ -3,6 +3,7 @@ import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 import axios, { HttpStatusCode } from "axios";
 import { commonConstants } from "../../common/commonConstants";
+import { envConfig } from "../config/envConfig";
 
 const CreateToken = () => {
   const [tokenName, setTokenName] = useState("");
@@ -23,9 +24,9 @@ const CreateToken = () => {
         tokenName: tokenName,
         tokenSymbol: tokenSymbol,
       };
-      console.log("🚀 ~ handleCreateToken ~ body:", body);
+
       const response = await axios.post(
-        `${process.env.PUBLIC_BASE_URL}/${commonConstants.createToken}`,
+        `${envConfig.PUBLIC_BASE_URL}/${commonConstants.createToken}`,
         body
       );
 
@@ -133,7 +134,6 @@ const CreateToken = () => {
                       id="tokenName"
                       value={tokenName}
                       onChange={(e) => {
-                        console.log("Token Name selected:", e.target.value);
                         setTokenName(e.target.value);
                       }}
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
@@ -185,12 +185,14 @@ const CreateToken = () => {
                     <select
                       id="tokenSymbol"
                       value={tokenSymbol}
-                      onChange={(e) => setTokenSymbol(e.target.value)}
+                      onChange={(e) => {
+                        setTokenSymbol(e.target.value);
+                      }}
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
                     >
                       <option value="">--Select Token Name--</option>
-                      <option value="landParcel">Land Token</option>
-                      <option value="agriculturalLandParcel">
+                      <option value="landToken">Land Token</option>
+                      <option value="agricultureToken">
                         Agricultural Token
                       </option>
                     </select>

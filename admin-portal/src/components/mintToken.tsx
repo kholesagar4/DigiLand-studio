@@ -3,6 +3,7 @@ import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 import axios, { HttpStatusCode } from "axios";
 import { commonConstants } from "../../common/commonConstants";
+import { envConfig } from "../config/envConfig";
 
 const MintToken = () => {
   const [assetType, setAssetType] = useState("fungible");
@@ -41,10 +42,9 @@ const MintToken = () => {
         landType: metadata.landType,
         additionalInfo: metadata.additionalInfo,
       };
-      console.log("🚀 ~ handleMintToken ~ body:", body)
 
       // Making the POST request to mint the token
-      const response = await axios.post(`${process.env.PUBLIC_BASE_URL}/${commonConstants.mintToken}`, body);
+      const response = await axios.post(`${envConfig.PUBLIC_BASE_URL}/${commonConstants.mintToken}`, body);
 
       if (!response.data) {
         throw new Error("Error minting token");

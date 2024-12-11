@@ -3,6 +3,7 @@ import Sidebar from "./sidebar";
 import Navbar from "./navbar";
 import axios, { HttpStatusCode } from "axios";
 import { commonConstants } from "../../common/commonConstants";
+import { envConfig } from "../config/envConfig";
 
 const TransferToken = () => {
   const [senderAccount, setSenderAccount] = useState("");
@@ -30,7 +31,7 @@ const TransferToken = () => {
       };
 
       const response = await axios.post(
-        `${process.env.PUBLIC_BASE_URL}/${commonConstants.transferToken}/${tokenId}`,
+        `${envConfig.PUBLIC_BASE_URL}/${commonConstants.transferToken}/${tokenId}`,
         body
       );
 
