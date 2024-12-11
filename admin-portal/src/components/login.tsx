@@ -1,4 +1,13 @@
+import { useState } from "react";
+
 const Login = () => {
+  const [email, setEmail] = useState('');
+
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setEmail(value);
+    localStorage.setItem('email', value);
+  };
 
   const handleClick = () => {
     window.location.href = '/dashboard';
@@ -42,6 +51,8 @@ const Login = () => {
                           className="block w-full rounded border border-green-300 bg-transparent px-3 py-3 leading-[1.6] outline-none transition-all duration-200 focus:border-green-500 focus:ring focus:ring-green-200 dark:text-white"
                           id="username"
                           placeholder="Enter your username"
+                          value={email}
+                          onChange={handleEmailChange}
                         />
                       </div>
 

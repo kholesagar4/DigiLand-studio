@@ -1,60 +1,56 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Sidebar from "./sidebar";
 import Navbar from "./navbar";
+import axios, { HttpStatusCode } from "axios";
+import { commonConstants } from "../../common/commonConstants";
 
 const MintToken = () => {
-  const [tokenId, setTokenId] = useState("");
   const [assetType, setAssetType] = useState("fungible");
   const [isLoading, setIsLoading] = useState(false);
-  const [hoveredTooltip, setHoveredTooltip] = useState(null);
+  const [hoveredTooltip, setHoveredTooltip] = useState('');
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [metadata, setMetadata] = useState({
-    surveyNumber: "",
-    ownerName: "",
-    location: "",
-    size: "",
-    landType: "",
-    additionalInfo: "",
+  const [tokenId, setTokenId] = useState('');
+  const [metadata, setMetadata] = useState<{
+    [key: string]: string;
+  }>({
+    surveyNumber: '',
+    ownerName: '',
+    location: '',
+    size: '',
+    landType: '',
+    additionalInfo: ''
   });
 
+  useEffect(() => {
+    const storedTokenId = localStorage.getItem('tokenId');
+    if (storedTokenId) {
+      setTokenId(storedTokenId);
+    }
+  }, []);
+  
   const handleMintToken = async () => {
     setIsLoading(true);
     try {
-      console.log("Minting token with the following details:", {
+
+      const body = {
         tokenId,
-        assetType,
-        metadata,
-      });
+        surveyNumber: metadata.surveyNumber,
+        ownerName: metadata.ownerName,
+        location: metadata.location,
+        size: metadata.size,
+        landType: metadata.landType,
+        additionalInfo: metadata.additionalInfo,
+      };
+      console.log("🚀 ~ handleMintToken ~ body:", body)
 
       // Making the POST request to mint the token
-      const response = await fetch(
-        "http://localhost:3000/v1/land-nft/mintLandToken",
-        {
-          method: "POST",
-          headers: {
-            accept: "*/*",
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            tokenId: tokenId,
-            // surveyNumber: surveyNumber,  // Assuming you have this value
-            // ownerName: ownerName,        // Assuming you have this value
-            // location: location,          // Assuming you have this value
-            // size: size,                  // Assuming you have this value
-            // landType: landType,          // Assuming you have this value
-            // additionalInfo: additionalInfo, // Assuming you have this value
-          }),
-        }
-      );
+      const response = await axios.post(`${process.env.PUBLIC_BASE_URL}/${commonConstants.mintToken}`, body);
 
-      if (!response.ok) {
+      if (!response.data) {
         throw new Error("Error minting token");
+      } else if (response?.data?.statusCode === HttpStatusCode.Ok ){
+        setShowSuccessPopup(true);
       }
-
-      // If the response is successful, alert the user
-      const data = await response.json();
-      console.log("Token Minted:", data);
-      setShowSuccessPopup(true); // Trigger success popup
     } catch (error) {
       console.error("Error minting token:", error);
       alert("Error minting token!");
@@ -64,7 +60,7 @@ const MintToken = () => {
   };
 
   // Function to handle the change of metadata fields
-  const handleFieldChange = (field, value) => {
+  const handleFieldChange = (field: string, value: string) => {
     setMetadata({
       ...metadata,
       [field]: value,
@@ -112,7 +108,7 @@ const MintToken = () => {
                       <button
                         className="text-green-600 hover:text-green-800"
                         onMouseEnter={() => setHoveredTooltip("tokenId")}
-                        onMouseLeave={() => setHoveredTooltip(null)}
+                        onMouseLeave={() => setHoveredTooltip('')}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -129,16 +125,8 @@ const MintToken = () => {
                         </svg>
                       </button>
                       <span className="ml-6 px-4 py-2 border rounded border-green-300 bg-gray-200 text-gray-600">
-                        {/* {tokenId} Token ID is displayed here */}
-                        1234567890123456789012345678901234567890
-                      </span>
-
-                      {hoveredTooltip === "tokenId" && (
-                        <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                          Token name can be up to 100 letters, and they are not
-                          unique on the Hedera network
-                        </div>
-                      )}
+                         {tokenId}
+                       </span>
                     </div>
 
                     <div>
@@ -149,70 +137,37 @@ const MintToken = () => {
                         >
                           Asset Type :
                         </label>
-                        <button
-                          className="text-green-600 hover:text-green-800"
-                          onMouseEnter={() => setHoveredTooltip("assetType")}
-                          onMouseLeave={() => setHoveredTooltip(null)}
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            fill="none"
-                            viewBox="0 0 20 20"
-                            className="ml-3 dark:text-white text-primary-700"
-                          >
-                            <path
-                              fill="currentColor"
-                              d="M9.168 14.167h1.667v-5H9.168v5Zm.833-6.667c.236 0 .434-.08.594-.24a.803.803 0 0 0 .24-.593.806.806 0 0 0-.24-.594.807.807 0 0 0-.594-.24.806.806 0 0 0-.593.24.806.806 0 0 0-.24.594c0 .236.08.434.24.594.16.16.357.24.593.24Zm0 10.834a8.115 8.115 0 0 1-3.25-.657 8.415 8.415 0 0 1-2.646-1.78 8.416 8.416 0 0 1-1.78-2.647A8.115 8.115 0 0 1 1.667 10c0-1.152.219-2.236.656-3.25a8.416 8.416 0 0 1 1.781-2.646 8.415 8.415 0 0 1 2.646-1.78A8.115 8.115 0 0 1 10 1.667c1.153 0 2.236.219 3.25.656a8.415 8.415 0 0 1 2.646 1.781 8.416 8.416 0 0 1 1.781 2.646 8.115 8.115 0 0 1 .657 3.25 8.115 8.115 0 0 1-.657 3.25 8.416 8.416 0 0 1-1.78 2.646 8.415 8.415 0 0 1-2.647 1.781 8.115 8.115 0 0 1-3.25.657Zm0-1.667c1.861 0 3.438-.646 4.73-1.938 1.291-1.291 1.937-2.868 1.937-4.729 0-1.86-.646-3.437-1.938-4.729-1.291-1.292-2.868-1.937-4.729-1.937-1.86 0-3.437.645-4.729 1.937-1.292 1.292-1.937 2.868-1.937 4.73 0 1.86.645 3.437 1.937 4.729 1.292 1.291 2.868 1.937 4.73 1.937Z"
-                            />
-                          </svg>
-                        </button>
-
-                        {/* Dropdown for Asset type */}
                         <select
                           id="assetType"
                           value={assetType}
                           onChange={(e) => setAssetType(e.target.value)}
-                          className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
+                          className="ml-6 px-4 py-2 border rounded border-green-300 bg-gray-200 text-gray-600"
                         >
-                          <option value="fungible">Fungible Token</option>
-                          <option value="non-fungible">
-                            Non-Fungible Token (NFT)
-                          </option>
+                          <option value="fungible">Fungible</option>
+                          <option value="non-fungible">Non-Fungible</option>
                         </select>
-
-                        {/* Tooltip */}
-                        {hoveredTooltip === "assetType" && (
-                          <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                            Token name can be up to 100 letters, and they are
-                            not unique on the Hedera network
-                          </div>
-                        )}
                       </div>
                     </div>
                   </div>
 
-                  <hr className="my-2 border-green-400" />
+                                    <div className="mt-8">
+                     <div className="mb-2">
+                       <h4 className="text-lg font-semibold text-green-600 mb-1">
+                         2. Metadata
+                       </h4>
+                       <h4 className="text-green-600 text-sm">
+                         Modify the metadata details for your token below:
+                       </h4>
+                     </div>
 
-                  <div className="mt-8">
-                    <div className="mb-2">
-                      <h4 className="text-lg font-semibold text-green-600 mb-1">
-                        2. Metadata
-                      </h4>
-                      <h4 className="text-green-600 text-sm">
-                        Modify the metadata details for your token below:
-                      </h4>
-                    </div>
-
-                    <div className="mt-8 flex space-x-8">
-                      {/* Cards for Metadata Fields */}
-                      <div className="p-6 rounded-lg shadow-md border border-gray-200 bg-green-100 w-1/2">
-                        <h4 className="text-lg font-semibold text-green-600 mb-4">
-                          Metadata Fields
-                        </h4>
-                        <div className="space-y-4">
-                          {Object.keys(metadata).map((key) => (
+                     <div className="mt-8 flex space-x-8">
+                       {/* Cards for Metadata Fields */}
+                       <div className="p-6 rounded-lg shadow-md border border-gray-200 bg-green-100 w-1/2">
+                         <h4 className="text-lg font-semibold text-green-600 mb-4">
+                           Metadata Fields
+                         </h4>
+                         <div className="space-y-4">
+                           {Object.keys(metadata).map((key) => (
                             <div
                               key={key}
                               className="flex justify-between items-center"
@@ -244,33 +199,44 @@ const MintToken = () => {
                       </div>
                     </div>
                   </div>
-
-                  <div className="flex justify-end">
-                    <button
-                      type="button"
-                      onClick={handleMintToken}
-                      className={`w-80 bg-green-600 text-white py-3 px-4 rounded hover:bg-green-700 transition ${
-                        isLoading ? "opacity-50 cursor-not-allowed" : ""
-                      } mt-6`}
-                      disabled={isLoading}
-                    >
-                      {isLoading ? "Minting Token..." : "Mint Token"}
-                    </button>
-                  </div>
+  
                 </div>
               </form>
-            </div>
 
-            {showSuccessPopup && (
-              <div className="fixed inset-0 flex items-center justify-center z-50">
-                <div
-                  className="bg-green-100 text-green-800 p-6 rounded-lg shadow-lg transition-opacity opacity-0 animate-fade-in"
-                  style={{ animationDuration: "1s" }}
+              <div className="mt-6">
+                <button
+                  onClick={handleMintToken}
+                  disabled={isLoading}
+                  className={`${
+                    isLoading
+                      ? "bg-gray-300 text-gray-600"
+                      : "bg-green-600 text-white"
+                  } px-6 py-3 rounded-lg`}
                 >
-                  <h3 className="text-xl font-semibold">Success!</h3>
-                  <p>Token Minted Successfully!</p>
+                  {isLoading ? "Minting..." : "Mint Token"}
+                </button>
+              </div>
+
+{showSuccessPopup && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div
+                  className={`bg-green-200 text-green-800 p-10 rounded-xl shadow-2xl transition-all transform ${
+                    showSuccessPopup
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75"
+                  } animate-fade-in`}
+                  style={{ animationDuration: "1s", width: "500px" }}
+                >
+                  <h3 className="text-3xl font-bold animate-bounce">
+                    Success!
+                  </h3>
+                  <p className="mt-4 text-lg">Token Minted Successfully!</p>
+                  <p className="text-md text-gray-600">
+                      Your token has been minted successfully. You can now view
+                      the details.
+                    </p>
                   <button
-                    className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    className="justify-center items-center mt-6 px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700 hover:scale-105 transform transition-transform duration-300"
                     onClick={() => setShowSuccessPopup(false)}
                   >
                     Close
@@ -278,7 +244,7 @@ const MintToken = () => {
                 </div>
               </div>
             )}
-
+            </div>
           </div>
         </main>
       </div>

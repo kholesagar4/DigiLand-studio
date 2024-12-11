@@ -1,46 +1,41 @@
 import { useState } from "react";
 import Sidebar from "./sidebar";
 import Navbar from "./navbar";
+import axios, { HttpStatusCode } from "axios";
+import { commonConstants } from "../../common/commonConstants";
 
 const CreateToken = () => {
   const [tokenName, setTokenName] = useState("");
   const [tokenSymbol, setTokenSymbol] = useState("");
-  const [tokenType, setTokenType] = useState("fungible");
   const [isLoading, setIsLoading] = useState(false);
-  const [hoveredTooltip, setHoveredTooltip] = useState(null);
+  const [hoveredTooltip, setHoveredTooltip] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const handleCreateToken = async () => {
     setIsLoading(true);
     try {
-      console.log("Creating token:", {
-        tokenName,
-        tokenSymbol,
-        tokenType,
-      });
-  
-      // Making the POST request to the backend API
-      const response = await fetch('http://localhost:3000/v1/land-nft/registerLandToken', {
-        method: 'POST',
-        headers: {
-          'accept': '*/*',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          tokenName: tokenName,
-          tokenSymbol: tokenSymbol,
-          tokenType: tokenType,
-        }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Error creating token');
+      if (!tokenName || !tokenSymbol) {
+        alert("Please select a token name and symbol before creating a token.");
+        return;
       }
-  
-      // If the response is successful, alert the user
-      const data = await response.json();
-      console.log('Token Created:', data);
-      setShowSuccessPopup(true); // Trigger success popup
+
+      const body = {
+        tokenName: tokenName,
+        tokenSymbol: tokenSymbol,
+      };
+      console.log("🚀 ~ handleCreateToken ~ body:", body);
+      const response = await axios.post(
+        `${process.env.PUBLIC_BASE_URL}/${commonConstants.createToken}`,
+        body
+      );
+
+      if (!response.data) {
+        throw new Error("Error creating token");
+      } else if (response?.data?.statusCode === HttpStatusCode.Created) {
+        setShowSuccessPopup(true);
+        const tokenId = response?.data?.data?.tokenId
+        localStorage.setItem('tokenId', tokenId)
+      }
     } catch (error) {
       console.error("Error creating token:", error);
       alert("Error creating token!");
@@ -48,7 +43,6 @@ const CreateToken = () => {
       setIsLoading(false);
     }
   };
-  
 
   return (
     <div className="flex bg-gradient-to-r from-green-100 via-green-200 to-green-300 min-h-screen">
@@ -73,6 +67,29 @@ const CreateToken = () => {
                 cases.
               </p>
             </div>
+            {showSuccessPopup && (
+              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                <div
+                  className={`bg-green-200 text-green-800 p-10 rounded-xl shadow-2xl transition-all transform ${
+                    showSuccessPopup
+                      ? "opacity-100 scale-100"
+                      : "opacity-0 scale-75"
+                  } animate-fade-in`}
+                  style={{ animationDuration: "1s", width: "500px" }}
+                >
+                  <h3 className="text-3xl font-bold animate-bounce">
+                    Success!
+                  </h3>
+                  <p className="mt-4 text-lg">Token Created Successfully!</p>
+                  <button
+                    className="justify-center items-center mt-6 px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700 hover:scale-105 transform transition-transform duration-300"
+                    onClick={() => setShowSuccessPopup(false)}
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            )}
             <div className="max-h-[500px] overflow-auto">
               <form className="space-y-8">
                 {/* Basic Info Section */}
@@ -93,7 +110,7 @@ const CreateToken = () => {
                     <button
                       className="text-green-600 hover:text-green-800"
                       onMouseEnter={() => setHoveredTooltip("tokenName")}
-                      onMouseLeave={() => setHoveredTooltip(null)}
+                      onMouseLeave={() => setHoveredTooltip("")}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -111,12 +128,17 @@ const CreateToken = () => {
                     </button>
 
                     {/* Dropdown for Token Name */}
+
                     <select
                       id="tokenName"
                       value={tokenName}
-                      onChange={(e) => setTokenName(e.target.value)}
+                      onChange={(e) => {
+                        console.log("Token Name selected:", e.target.value);
+                        setTokenName(e.target.value);
+                      }}
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
                     >
+                      <option value="">--Select Token Name--</option>
                       <option value="landParcel">Land Parcel</option>
                       <option value="agriculturalLandParcel">
                         Agricultural Land Parcel
@@ -142,7 +164,7 @@ const CreateToken = () => {
                     <button
                       className="text-green-600 hover:text-green-800"
                       onMouseEnter={() => setHoveredTooltip("tokenSymbol")}
-                      onMouseLeave={() => setHoveredTooltip(null)}
+                      onMouseLeave={() => setHoveredTooltip("")}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -166,6 +188,7 @@ const CreateToken = () => {
                       onChange={(e) => setTokenSymbol(e.target.value)}
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
                     >
+                      <option value="">--Select Token Name--</option>
                       <option value="landParcel">Land Token</option>
                       <option value="agriculturalLandParcel">
                         Agricultural Token
@@ -205,7 +228,7 @@ const CreateToken = () => {
                     <button
                       className="text-green-600 hover:text-green-800"
                       onMouseEnter={() => setHoveredTooltip("supplyType")}
-                      onMouseLeave={() => setHoveredTooltip(null)}
+                      onMouseLeave={() => setHoveredTooltip("")}
                     >
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -433,25 +456,6 @@ const CreateToken = () => {
                 </div>
               </form>
             </div>
-
-            {showSuccessPopup && (
-              <div className="fixed inset-0 flex items-center justify-center z-50">
-                <div
-                  className="bg-green-100 text-green-800 p-6 rounded-lg shadow-lg transition-opacity opacity-0 animate-fade-in"
-                  style={{ animationDuration: "1s" }}
-                >
-                  <h3 className="text-xl font-semibold">Success!</h3>
-                  <p>Token Minted Successfully!</p>
-                  <button
-                    className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                    onClick={() => setShowSuccessPopup(false)}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            )}
-
           </div>
         </main>
       </div>

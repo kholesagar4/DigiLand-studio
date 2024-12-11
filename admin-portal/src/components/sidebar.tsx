@@ -29,8 +29,13 @@ const Sidebar = () => {
     window.location.href = "/transfertoken?menu=token";
   };
 
+  const goToPauseToken = () => {
+    window.location.href = "/pausetoken?menu=token";
+  };
+
   const handleSignOut = () => {
     window.location.href = "/login";
+    localStorage.removeItem('email');
   };
 
   return (
@@ -142,6 +147,14 @@ const Sidebar = () => {
                       className="flex items-center py-2 px-3 rounded hover:bg-green-500 transition"
                     >
                       Transfer Token
+                    </button>
+                  </li>
+                  <li>
+                    <button
+                      onClick={goToPauseToken}
+                      className="flex items-center py-2 px-3 rounded hover:bg-green-500 transition"
+                    >
+                      Pause Token
                     </button>
                   </li>
                 </ul>
