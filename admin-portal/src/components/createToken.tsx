@@ -34,8 +34,8 @@ const CreateToken = () => {
         throw new Error("Error creating token");
       } else if (response?.data?.statusCode === HttpStatusCode.Created) {
         setShowSuccessPopup(true);
-        const tokenId = response?.data?.data?.tokenId
-        localStorage.setItem('tokenId', tokenId)
+        const tokenId = response?.data?.data?.tokenId;
+        localStorage.setItem("tokenId", tokenId);
       }
     } catch (error) {
       console.error("Error creating token:", error);
@@ -107,6 +107,7 @@ const CreateToken = () => {
                     >
                       Token Name :
                     </label>
+
                     {/* Tooltip Button */}
                     <button
                       className="text-green-600 hover:text-green-800"
@@ -129,7 +130,6 @@ const CreateToken = () => {
                     </button>
 
                     {/* Dropdown for Token Name */}
-
                     <select
                       id="tokenName"
                       value={tokenName}
@@ -138,16 +138,22 @@ const CreateToken = () => {
                       }}
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
                     >
-                      <option value="">--Select Token Name--</option>
-                      <option value="landParcel">Land Parcel</option>
+                      <option value="">
+                        - - - - - Select Token Name - - - - -
+                      </option>
+                      <option value="landParcel">Land Parcel Token</option>
                       <option value="agriculturalLandParcel">
-                        Agricultural Land Parcel
+                        Agricultural Land Parcel Token
                       </option>
                     </select>
 
                     {/* Tooltip */}
                     {hoveredTooltip === "tokenName" && (
-                      <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
+                      <div
+                        className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                        onMouseEnter={() => setHoveredTooltip("tokenName")}
+                        onMouseLeave={() => setHoveredTooltip("")}
+                      >
                         Token name can be up to 100 letters, and they are not
                         unique on the Hedera network
                       </div>
@@ -190,18 +196,23 @@ const CreateToken = () => {
                       }}
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
                     >
-                      <option value="">--Select Token Name--</option>
-                      <option value="landToken">Land Token</option>
-                      <option value="agricultureToken">
-                        Agricultural Token
+                      <option value="">
+                        - - - - - Select Token Symbol - - - - -
                       </option>
+                      <option value="landToken">LAND</option>
+                      <option value="agricultureToken">AGRICULTURE</option>
                     </select>
 
                     {/* Tooltip */}
                     {hoveredTooltip === "tokenSymbol" && (
-                      <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                        Token name can be up to 100 letters, and they are not
-                        unique on the Hedera network
+                      <div
+                        className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                        onMouseEnter={() => setHoveredTooltip("tokenSymbol")}
+                        onMouseLeave={() => setHoveredTooltip("")}
+                      >
+                        A short, non-unique token symbol (up to 100 characters)
+                        represents tokens on Hedera, with shorter symbols
+                        recommended.
                       </div>
                     )}
                   </div>
@@ -251,16 +262,19 @@ const CreateToken = () => {
                       id="supplyType"
                       className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
                     >
-                      <option value="landParcel">Land Token</option>
+                      <option value="landParcel">Infinite</option>
                       <option value="agriculturalLandParcel">
-                        Agricultural Token
+                        Finite
                       </option>
                     </select>
 
                     {hoveredTooltip === "supplyType" && (
-                      <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                        Token name can be up to 100 letters, and they are not
-                        unique on the Hedera network
+                      <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                      onMouseEnter={() => setHoveredTooltip("supplyType")}
+                      onMouseLeave={() => setHoveredTooltip("")}
+                       >
+                        Infinite supply allows minting and burning of additional tokens after creation, while Finite supply is set 
+                        during the creation and cannot be changed later.
                       </div>
                     )}
                   </div>
@@ -274,6 +288,7 @@ const CreateToken = () => {
                     <h4 className="text-lg font-semibold text-green-600 mb-1">
                       3. Keys
                     </h4>
+                   
                     <h4 className="text-green-600 text-sm mb-4">
                       Do you want to be able to update part of token properties
                       and information in the future?

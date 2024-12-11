@@ -38,7 +38,7 @@ const TransferToken = () => {
       if (!response?.data) {
         window.alert("error in transferring token");
       } else if (response?.data?.statusCode === HttpStatusCode.Ok) {
-        setShowSuccessPopup(true); // Trigger success popup
+        setShowSuccessPopup(true);
       }
     } catch (error) {
       console.error("Error transferring token:", error);
@@ -107,13 +107,15 @@ const TransferToken = () => {
                         value={senderAccount}
                         onChange={(e) => setSenderAccount(e.target.value)}
                         className="w-1/2 px-4 py-2 ml-6 border rounded border-green-300 focus:ring focus:ring-green-200 focus:border-green-500"
-                        placeholder="Enter Token ID"
+                        placeholder="Enter Sender's account id"
                       />
 
                       {hoveredTooltip === "senderAccount" && (
-                        <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                          Enter the token ID, which is a unique identifier for
-                          the token.
+                        <div className="absolute -top-2 -left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                        onMouseEnter={() => setHoveredTooltip("senderAccount")}
+                        onMouseLeave={() => setHoveredTooltip("")}
+                      >
+                        Hedera account Id refers to the unique identifier associated with the Hedera account initiating a transaction. 
                         </div>
                       )}
                     </div>
@@ -157,9 +159,13 @@ const TransferToken = () => {
                       />
 
                       {hoveredTooltip === "recipientAccount" && (
-                        <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                          Enter the token ID, which is a unique identifier for
-                          the token.
+                        <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                        onMouseEnter={() =>
+                          setHoveredTooltip("recipientAccount")
+                        }
+                        onMouseLeave={() => setHoveredTooltip("")}
+                      >
+                        Hedera account Id refers to the unique identifier associated with the Hedera account initiating a transaction. 
                         </div>
                       )}
                     </div>
@@ -201,9 +207,11 @@ const TransferToken = () => {
                       />
 
                       {hoveredTooltip === "serialNo" && (
-                        <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72">
-                          Enter the token ID, which is a unique identifier for
-                          the token.
+                        <div className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                        onMouseEnter={() => setHoveredTooltip("serialNo")}
+                        onMouseLeave={() => setHoveredTooltip("")}
+                      >
+                          A serial no is a unique identifier for each individual token within a specific token type, distinguishing each non-fungible token (NFT).
                         </div>
                       )}
                     </div>
@@ -234,7 +242,7 @@ const TransferToken = () => {
                   style={{ animationDuration: "1s" }}
                 >
                   <h3 className="text-xl font-semibold">Success!</h3>
-                  <p>Token Minted Successfully!</p>
+                  <p>Token Transferred Successfully!</p>
                   <button
                     className="mt-4 px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                     onClick={() => setShowSuccessPopup(false)}

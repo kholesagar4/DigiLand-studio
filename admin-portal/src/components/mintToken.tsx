@@ -8,31 +8,30 @@ import { envConfig } from "../config/envConfig";
 const MintToken = () => {
   const [assetType, setAssetType] = useState("fungible");
   const [isLoading, setIsLoading] = useState(false);
-  const [hoveredTooltip, setHoveredTooltip] = useState('');
+  const [hoveredTooltip, setHoveredTooltip] = useState("");
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-  const [tokenId, setTokenId] = useState('');
+  const [tokenId, setTokenId] = useState("");
   const [metadata, setMetadata] = useState<{
     [key: string]: string;
   }>({
-    surveyNumber: '',
-    ownerName: '',
-    location: '',
-    size: '',
-    landType: '',
-    additionalInfo: ''
+    surveyNumber: "",
+    ownerName: "",
+    location: "",
+    size: "",
+    landType: "",
+    additionalInfo: "",
   });
 
   useEffect(() => {
-    const storedTokenId = localStorage.getItem('tokenId');
+    const storedTokenId = localStorage.getItem("tokenId");
     if (storedTokenId) {
       setTokenId(storedTokenId);
     }
   }, []);
-  
+
   const handleMintToken = async () => {
     setIsLoading(true);
     try {
-
       const body = {
         tokenId,
         surveyNumber: metadata.surveyNumber,
@@ -44,11 +43,14 @@ const MintToken = () => {
       };
 
       // Making the POST request to mint the token
-      const response = await axios.post(`${envConfig.PUBLIC_BASE_URL}/${commonConstants.mintToken}`, body);
+      const response = await axios.post(
+        `${envConfig.PUBLIC_BASE_URL}/${commonConstants.mintToken}`,
+        body
+      );
 
       if (!response.data) {
         throw new Error("Error minting token");
-      } else if (response?.data?.statusCode === HttpStatusCode.Ok ){
+      } else if (response?.data?.statusCode === HttpStatusCode.Ok) {
         setShowSuccessPopup(true);
       }
     } catch (error) {
@@ -108,7 +110,7 @@ const MintToken = () => {
                       <button
                         className="text-green-600 hover:text-green-800"
                         onMouseEnter={() => setHoveredTooltip("tokenId")}
-                        onMouseLeave={() => setHoveredTooltip('')}
+                        onMouseLeave={() => setHoveredTooltip("")}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -125,8 +127,18 @@ const MintToken = () => {
                         </svg>
                       </button>
                       <span className="ml-6 px-4 py-2 border rounded border-green-300 bg-gray-200 text-gray-600">
-                         {tokenId}
-                       </span>
+                        {tokenId}
+                      </span>
+                      {hoveredTooltip === "tokenId" && (
+                        <div
+                          className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                          onMouseEnter={() => setHoveredTooltip("tokenId")}
+                          onMouseLeave={() => setHoveredTooltip("")}
+                        >
+                          A unique identifier for each token on the Hedera
+                          network, in the format 0.0.xxxxx
+                        </div>
+                      )}
                     </div>
 
                     <div>
@@ -137,37 +149,103 @@ const MintToken = () => {
                         >
                           Asset Type :
                         </label>
+                        <button
+                          className="text-green-600 hover:text-green-800"
+                          onMouseEnter={() => setHoveredTooltip("assetType")}
+                          onMouseLeave={() => setHoveredTooltip("")}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            viewBox="0 0 20 20"
+                            className="ml-3 dark:text-white text-primary-700"
+                          >
+                            <path
+                              fill="currentColor"
+                              d="M9.168 14.167h1.667v-5H9.168v5Zm.833-6.667c.236 0 .434-.08.594-.24a.803.803 0 0 0 .24-.593.806.806 0 0 0-.24-.594.807.807 0 0 0-.594-.24.806.806 0 0 0-.593.24.806.806 0 0 0-.24.594c0 .236.08.434.24.594.16.16.357.24.593.24Zm0 10.834a8.115 8.115 0 0 1-3.25-.657 8.415 8.415 0 0 1-2.646-1.78 8.416 8.416 0 0 1-1.78-2.647A8.115 8.115 0 0 1 1.667 10c0-1.152.219-2.236.656-3.25a8.416 8.416 0 0 1 1.781-2.646 8.415 8.415 0 0 1 2.646-1.78A8.115 8.115 0 0 1 10 1.667c1.153 0 2.236.219 3.25.656a8.415 8.415 0 0 1 2.646 1.781 8.416 8.416 0 0 1 1.781 2.646 8.115 8.115 0 0 1 .657 3.25 8.115 8.115 0 0 1-.657 3.25 8.416 8.416 0 0 1-1.78 2.646 8.415 8.415 0 0 1-2.647 1.781 8.115 8.115 0 0 1-3.25.657Zm0-1.667c1.861 0 3.438-.646 4.73-1.938 1.291-1.291 1.937-2.868 1.937-4.729 0-1.86-.646-3.437-1.938-4.729-1.291-1.292-2.868-1.937-4.729-1.937-1.86 0-3.437.645-4.729 1.937-1.292 1.292-1.937 2.868-1.937 4.73 0 1.86.645 3.437 1.937 4.729 1.292 1.291 2.868 1.937 4.73 1.937Z"
+                            />
+                          </svg>
+                        </button>
+                        {hoveredTooltip === "assetType" && (
+                          <div
+                            className="absolute -top-10 left-0 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                            onMouseEnter={() => setHoveredTooltip("assetType")}
+                            onMouseLeave={() => setHoveredTooltip("")}
+                          >
+                            In Hedera, assets can be categorized as either
+                            fungible, where each unit is identical in value
+                            (e.g., tokens like HBAR), or non-fungible, where
+                            each asset is unique and has distinct value (e.g.,
+                            NFTs).
+                          </div>
+                        )}
                         <select
                           id="assetType"
                           value={assetType}
                           onChange={(e) => setAssetType(e.target.value)}
                           className="ml-6 px-4 py-2 border rounded border-green-300 bg-gray-200 text-gray-600"
                         >
-                          <option value="fungible">Fungible</option>
-                          <option value="non-fungible">Non-Fungible</option>
+                          <option value="Non-Fungible">Non-Fungible</option>
+                          <option value="Fungible">Fungible</option>
                         </select>
                       </div>
                     </div>
                   </div>
 
-                                    <div className="mt-8">
-                     <div className="mb-2">
-                       <h4 className="text-lg font-semibold text-green-600 mb-1">
-                         2. Metadata
-                       </h4>
-                       <h4 className="text-green-600 text-sm">
-                         Modify the metadata details for your token below:
-                       </h4>
-                     </div>
+                  <div className="mt-8">
+                    <div className="mb-2">
+                      <div className="flex">
+                      <h4 className="text-lg font-semibold text-green-600 mb-1">
+                        2. Metadata
+                      </h4>
 
-                     <div className="mt-8 flex space-x-8">
-                       {/* Cards for Metadata Fields */}
-                       <div className="p-6 rounded-lg shadow-md border border-gray-200 bg-green-100 w-1/2">
-                         <h4 className="text-lg font-semibold text-green-600 mb-4">
-                           Metadata Fields
-                         </h4>
-                         <div className="space-y-4">
-                           {Object.keys(metadata).map((key) => (
+                      <button
+                          className="text-green-600 hover:text-green-800"
+                          onMouseEnter={() => setHoveredTooltip("metadata")}
+                          onMouseLeave={() => setHoveredTooltip("")}
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            fill="none"
+                            viewBox="0 0 20 20"
+                            className="ml-3 dark:text-white text-primary-700"
+                          >
+                            <path
+                              fill="currentColor"
+                              d="M9.168 14.167h1.667v-5H9.168v5Zm.833-6.667c.236 0 .434-.08.594-.24a.803.803 0 0 0 .24-.593.806.806 0 0 0-.24-.594.807.807 0 0 0-.594-.24.806.806 0 0 0-.593.24.806.806 0 0 0-.24.594c0 .236.08.434.24.594.16.16.357.24.593.24Zm0 10.834a8.115 8.115 0 0 1-3.25-.657 8.415 8.415 0 0 1-2.646-1.78 8.416 8.416 0 0 1-1.78-2.647A8.115 8.115 0 0 1 1.667 10c0-1.152.219-2.236.656-3.25a8.416 8.416 0 0 1 1.781-2.646 8.415 8.415 0 0 1 2.646-1.78A8.115 8.115 0 0 1 10 1.667c1.153 0 2.236.219 3.25.656a8.415 8.415 0 0 1 2.646 1.781 8.416 8.416 0 0 1 1.781 2.646 8.115 8.115 0 0 1 .657 3.25 8.115 8.115 0 0 1-.657 3.25 8.416 8.416 0 0 1-1.78 2.646 8.415 8.415 0 0 1-2.647 1.781 8.115 8.115 0 0 1-3.25.657Zm0-1.667c1.861 0 3.438-.646 4.73-1.938 1.291-1.291 1.937-2.868 1.937-4.729 0-1.86-.646-3.437-1.938-4.729-1.291-1.292-2.868-1.937-4.729-1.937-1.86 0-3.437.645-4.729 1.937-1.292 1.292-1.937 2.868-1.937 4.73 0 1.86.645 3.437 1.937 4.729 1.292 1.291 2.868 1.937 4.73 1.937Z"
+                            />
+                          </svg>
+                        </button>
+                        {hoveredTooltip === "metadata" && (
+                          <div
+                            className="absolute top-82 left-60 bg-yellow-100 text-yellow-800 p-2 rounded-md shadow-md w-72"
+                            onMouseEnter={() => setHoveredTooltip("metadata")}
+                            onMouseLeave={() => setHoveredTooltip("")}
+                          >
+                            metadata often includes unique details such as images, properties, and links to digital assets. 
+                            metadata helps in identifying and managing the token,
+                             enhancing its functionality and user experience.
+                          </div>
+                        )}
+                      </div>
+                     
+                      <h4 className="text-green-600 text-sm">
+                        Modify the metadata details for your token below:
+                      </h4>
+                    </div>
+
+                    <div className="mt-8 flex space-x-8">
+                      {/* Cards for Metadata Fields */}
+                      <div className="p-6 rounded-lg shadow-md border border-gray-200 bg-green-100 w-1/2">
+                        <h4 className="text-lg font-semibold text-green-600 mb-4">
+                          Metadata Fields
+                        </h4>
+                        <div className="space-y-4">
+                          {Object.keys(metadata).map((key) => (
                             <div
                               key={key}
                               className="flex justify-between items-center"
@@ -199,11 +277,10 @@ const MintToken = () => {
                       </div>
                     </div>
                   </div>
-  
                 </div>
               </form>
 
-              <div className="mt-6">
+              <div className="mt-6 flex justify-end mr-4">
                 <button
                   onClick={handleMintToken}
                   disabled={isLoading}
@@ -217,33 +294,33 @@ const MintToken = () => {
                 </button>
               </div>
 
-{showSuccessPopup && (
-              <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                <div
-                  className={`bg-green-200 text-green-800 p-10 rounded-xl shadow-2xl transition-all transform ${
-                    showSuccessPopup
-                      ? "opacity-100 scale-100"
-                      : "opacity-0 scale-75"
-                  } animate-fade-in`}
-                  style={{ animationDuration: "1s", width: "500px" }}
-                >
-                  <h3 className="text-3xl font-bold animate-bounce">
-                    Success!
-                  </h3>
-                  <p className="mt-4 text-lg">Token Minted Successfully!</p>
-                  <p className="text-md text-gray-600">
+              {showSuccessPopup && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                  <div
+                    className={`bg-green-200 text-green-800 p-10 rounded-xl shadow-2xl transition-all transform ${
+                      showSuccessPopup
+                        ? "opacity-100 scale-100"
+                        : "opacity-0 scale-75"
+                    } animate-fade-in`}
+                    style={{ animationDuration: "1s", width: "500px" }}
+                  >
+                    <h3 className="text-3xl font-bold animate-bounce">
+                      Success!
+                    </h3>
+                    <p className="mt-4 text-lg">Token Minted Successfully!</p>
+                    <p className="text-md text-gray-600">
                       Your token has been minted successfully. You can now view
                       the details.
                     </p>
-                  <button
-                    className="justify-center items-center mt-6 px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700 hover:scale-105 transform transition-transform duration-300"
-                    onClick={() => setShowSuccessPopup(false)}
-                  >
-                    Close
-                  </button>
+                    <button
+                      className="justify-center items-center mt-6 px-6 py-3 bg-green-600 text-white rounded-lg text-lg hover:bg-green-700 hover:scale-105 transform transition-transform duration-300"
+                      onClick={() => setShowSuccessPopup(false)}
+                    >
+                      Close
+                    </button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
             </div>
           </div>
         </main>
