@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 const LoginForm: React.FC = () => {
+  const [accountId, setAccountId] = useState("");
+  const handleEmailChange = (e) => {
+    const value = e.target.value;
+    setAccountId(value);
+  };
 
   const handleLogin = () => {
-    window.location.href = '/dashboard';
-  }
-  
+    if (accountId) {
+      localStorage.setItem("accountId", accountId);
+      window.location.href = "/dashboard";
+    } else {
+      alert("Incorrect information entered");
+    }
+  };
+
   return (
     <div className="h-screen bg-gradient-to-br from-blue-600 to-cyan-300 flex justify-center items-center w-full">
       <form
@@ -37,8 +47,10 @@ const LoginForm: React.FC = () => {
               className="pl-2 outline-none focus:outline-none border-none w-full text-gray-700 focus:ring-2 focus:ring-white"
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder="Account Id"
               required
+              value={accountId}
+              onChange={handleEmailChange}
             />
           </div>
 
@@ -84,7 +96,7 @@ const LoginForm: React.FC = () => {
 
         {/* Login Button */}
         <button
-        onClick={handleLogin}
+          onClick={handleLogin}
           type="submit"
           className="mt-8 w-full shadow-lg bg-gradient-to-tr from-blue-600 to-red-400 hover:from-blue-700 hover:to-red-600 text-white py-3 rounded-lg text-lg font-bold tracking-wide transition-transform duration-300 transform hover:scale-105"
         >

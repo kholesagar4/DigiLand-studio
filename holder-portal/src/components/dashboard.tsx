@@ -1,37 +1,105 @@
-import { useState } from "react";
+import axios, { HttpStatusCode } from "axios";
+import { useEffect, useState } from "react";
+import { apiRoutes } from "../config/apiRoutes";
+import { envConfig } from "../config/envConfig";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
 
-const Dashboard = () => {
-  const [activeTab, setActiveTab] = useState("balance");
+type Token = {
+  admin_key: {
+    _type: string;
+    key: string;
+  };
+  metadata: string;
+  name: string;
+  symbol: string;
+  token_id: string;
+  type: "NON_FUNGIBLE_UNIQUE" | string;
+  decimals: number;
+};
 
-  // Placeholder data
-  const holderAccount = {
-    accountId: "0.0.123456",
-    balance: 10000, // in HBAR
-    tokens: [
-      {
-        name: "Token One",
-        symbol: "TOK1",
-        id: "0.0.111",
-        balance: 250,
-        logo: "https://via.placeholder.com/48",
-      },
-      {
-        name: "Token Two",
-        symbol: "TOK2",
-        id: "0.0.112",
-        balance: 400,
-        logo: "https://via.placeholder.com/48",
-      },
-      {
-        name: "Token Three",
-        symbol: "TOK3",
-        id: "0.0.113",
-        balance: 123,
-        logo: "https://via.placeholder.com/48",
-      },
-    ],
+const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [tokensList, setTokensList] = useState<Token[]>([]);
+
+  const Headers = [
+    "Token Id",
+    "Token Name",
+    "Token Symbol",
+    "Token Type",
+    "NFTsList",
+    "Action",
+  ];
+  // // Placeholder data
+  // const holderAccount = {
+  //   accountId: "0.0.123456",
+  //   balance: 10000, // in HBAR
+  //   tokens: [
+  //     {
+  //       name: "Token One",
+  //       symbol: "TOK1",
+  //       id: "0.0.111",
+  //       balance: 250,
+  //       logo: "https://via.placeholder.com/48",
+  //     },
+  //     {
+  //       name: "Token Two",
+  //       symbol: "TOK2",
+  //       id: "0.0.112",
+  //       balance: 400,
+  //       logo: "https://via.placeholder.com/48",
+  //     },
+  //     {
+  //       name: "Token Three",
+  //       symbol: "TOK3",
+  //       id: "0.0.113",
+  //       balance: 123,
+  //       logo: "https://via.placeholder.com/48",
+  //     },
+  //   ],
+  // };
+
+  useEffect(() => {
+    const getAccountId = localStorage.getItem("accountId");
+    handleCreateToken(getAccountId);
+  }, []);
+  const handleCreateToken = async (accountId: string | null) => {
+    setIsLoading(true);
+    try {
+      const body = {
+        "account.id": accountId,
+        limit: 2,
+        order: "desc",
+        type: "NON_FUNGIBLE_UNIQUE",
+      };
+
+      const response = await axios.get(
+        `${envConfig.PUBLIC_BASE_URL}${apiRoutes.tokens}`,
+        { params: body }
+      );
+
+      if (!response.data) {
+        throw new Error("Error creating token");
+      } else if (response?.status === HttpStatusCode.Ok) {
+        setTokensList(response?.data?.tokens);
+      }
+    } catch (error) {
+      alert("Error");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const NavigationToScreen = (route: string, token_id: string) => {
+    const tokenData = {
+      tokenId: token_id,
+    };
+    // Set the tokenData
+    // localStorage.setItem("tokenData", JSON.stringify(tokenData));
+    localStorage.setItem("tokenData", token_id);
+
+    // Navigate to the next page
+    window.location.href = route;
   };
 
   return (
@@ -42,12 +110,12 @@ const Dashboard = () => {
         <Navbar />
 
         <main className="flex-grow p-6">
-          <h2 className="text-2xl font-semibold text-blue-800 mb-6">
+          {/* <h2 className="text-2xl font-semibold text-blue-800 mb-6">
             Dashboard
-          </h2>
+          </h2> */}
 
           {/* Tabs */}
-          <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
+          {/* <div className="mb-4 border-b border-gray-200 dark:border-gray-700">
             <ul
               className="pl-5 flex flex-wrap -mb-px text-sm font-medium text-center"
               role="tablist"
@@ -83,18 +151,18 @@ const Dashboard = () => {
                 </button>
               </li>
             </ul>
-          </div>
+          </div> */}
 
           {/* Tab Content */}
-          <div className="my-12">
+          {/* <div className="my-12">
             <h4 className="text-blue-800 text-3xl font-bold">
               Digital Security Details
             </h4>
-          </div>
+          </div> */}
           <div>
-            {activeTab === "balance" && (
+            {/* {activeTab === "balance" && (
               <div className="relative w-full max-w-lg mx-auto mt-6">
-                {/* Balance Card */}
+              
                 <div className="bg-gradient-to-tr from-blue-600 to-cyan-400 text-white p-8 rounded-lg shadow-lg flex flex-col items-center space-y-6">
                   <h3 className="text-3xl font-bold text-center">
                     Current Available Balance
@@ -108,7 +176,7 @@ const Dashboard = () => {
 
                     <hr className="border-white my-4 w-full" />
 
-                    {/* Token Value Section */}
+                   
                     <div className="flex flex-col items-center">
                       <div className="text-6xl font-bold">
                         100
@@ -122,54 +190,80 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                {/* Transfer Button - Positioned outside the card */}
+               
                 <button
                   className="absolute bottom-6 right-6 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-400 transition"
-                  // onClick={() => handleTransfer()}
+                  
                 >
                   Transfer
                 </button>
               </div>
-            )}
+            )} */}
 
-            {activeTab === "tokens" && (
-              <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-                {holderAccount.tokens.map((token, index) => (
-                  <div
-                    key={index}
-                    className="bg-gradient-to-tr from-blue-600 to-cyan-400 text-white p-6 rounded-lg shadow-lg flex flex-col items-center space-y-4"
-                  >
-                    {/* Token Logo and Symbol side by side */}
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={token.logo}
-                        alt={token.symbol}
-                        className="w-16 h-16 rounded-full border-4 border-white shadow-md"
-                      />
-                      <h4 className="text-2xl font-bold">{token.symbol}</h4>
-                    </div>
-
-                    {/* Token Details */}
-                    <div className="text-center">
-                      <p className="text-lg mt-2">
-                        <span className="font-semibold">Token Name:</span>{" "}
-                        {token.name}
-                      </p>
-                      <hr className="border-white my-2" />
-                      <p className="text-lg mt-2">
-                        <span className="font-semibold">Balance:</span>{" "}
-                        {token.balance}
-                      </p>
-                      <hr className="border-white my-2" />
-                      <p className="text-lg mt-2">
-                        <span className="font-semibold">Token ID:</span>{" "}
-                        {token.id}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </section>
-            )}
+            <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
+              <table className="w-full text-left table-auto min-w-max">
+                <thead>
+                  <tr>
+                    {Headers.map((header) => (
+                      <th className="p-4 pt-7 pb-7 border-b border-slate-300 bg-slate-50">
+                        <p className="block text-sm font-bold leading-none text-slate-500">
+                          {header}
+                        </p>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {/* Render the Token List */}
+                  {tokensList?.map((token, index) => (
+                    <tr key={index} className="hover:bg-slate-50">
+                      <td className="p-4 border-b border-slate-200">
+                        <p className="block text-sm text-slate-800">
+                          {token.token_id}
+                        </p>
+                      </td>
+                      <td className="p-4 border-b border-slate-200">
+                        <p className="block text-sm text-slate-800">
+                          {token.name}
+                        </p>
+                      </td>
+                      <td className="p-4 border-b border-slate-200">
+                        <p className="block text-sm text-slate-800">
+                          {token.symbol}
+                        </p>
+                      </td>
+                      <td className="p-4 border-b border-slate-200">
+                        <p className="block text-sm text-slate-800">
+                          {token.type}
+                        </p>
+                      </td>
+                      <td className="p-4 border-b border-slate-200">
+                        <button
+                          onClick={() => {
+                            NavigationToScreen("/nftsList", token.token_id);
+                          }}
+                          type="button"
+                          className="rounded border-2 border-blue-500 px-2 py-1 text-xs font-medium text-blue-600 transition duration-150 hover:border-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                        >
+                          NFTs
+                        </button>
+                      </td>
+                      <td className="p-4 border-b border-slate-200">
+                        <button
+                          onClick={() => {
+                            NavigationToScreen("/tokenDetail", token.token_id);
+                          }}
+                          type="button"
+                          className="rounded border-2 border-blue-500 px-2 py-1 text-xs font-medium uppercase text-blue-600 transition duration-150 hover:border-blue-600 hover:bg-blue-50 hover:text-blue-700"
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </main>
       </div>

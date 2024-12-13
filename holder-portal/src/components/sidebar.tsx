@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 
 const Sidebar = () => {
-
   const goToDashboard = () => {
     window.location.href = "/dashboard";
   };
 
+  const goToTransactions = () => {
+    window.location.href = "/transactions";
+  };
+  
   const handleSignOut = () => {
     window.location.href = "/login";
   };
@@ -22,7 +25,7 @@ const Sidebar = () => {
             <li>
               <button
                 onClick={goToDashboard}
-                className="flex items-center space-x-2 py-2 px-4 rounded hover:bg-green-500 transition"
+                className="flex items-center space-x-2 py-2 px-4 rounded hover:bg-blue-500 transition"
               >
                 <svg
                   width="24"
@@ -49,6 +52,30 @@ const Sidebar = () => {
                   />
                 </svg>
                 <span>Dashboard</span>
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={goToTransactions}
+                className="flex items-center space-x-2 py-2 px-4 rounded hover:bg-blue-500 transition"
+              >
+                <svg
+                  className="h-6 w-6 text-white"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  fill="none"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  {" "}
+                  <path stroke="none" d="M0 0h24v24H0z" />{" "}
+                  <path d="M17 8v-3a1 1 0 0 0 -1 -1h-10a2 2 0 0 0 0 4h12a1 1 0 0 1 1 1v3m0 4v3a1 1 0 0 1 -1 1h-12a2 2 0 0 1 -2 -2v-12" />{" "}
+                  <path d="M20 12v4h-4a2 2 0 0 1 0 -4h4" />
+                </svg>
+                <span>Transactions</span>
               </button>
             </li>
           </ul>
