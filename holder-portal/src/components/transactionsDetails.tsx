@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
+import { apiRoutes } from "../config/apiRoutes";
+import { envConfig } from "../config/envConfig";
+import axios, { HttpStatusCode } from "axios";
 
 type Transfer = {
   account: string;
@@ -8,17 +11,37 @@ type Transfer = {
   is_approval: boolean;
 };
 const TransactionDetails = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const [transfersList, setTransfersList] = useState<Transfer[]>([]);
 
   const Headers = ["Account", "Amount", "Approval"];
 
   useEffect(() => {
-    const getTransferList = localStorage.getItem("transferList");
-    if (getTransferList) {
-      const parsedList: Transfer[] = JSON.parse(getTransferList);
-      setTransfersList(parsedList);
-    }
+    handleTransactionDetails();
   }, []);
+
+  const handleTransactionDetails = async () => {
+    const transactionId = localStorage.getItem("transferDetails");
+    if (transactionId !== null) {
+      const parsedData = JSON.parse(transactionId);
+      setIsLoading(true);
+      try {
+        const response = await axios.get(
+          `${envConfig.PUBLIC_BASE_URL}${apiRoutes.transaction}/${parsedData}`
+        );
+
+        if (!response.data) {
+          throw new Error("Error creating token");
+        } else if (response?.status === HttpStatusCode.Ok) {
+          setTransfersList(response?.data?.transactions[0].transfers);
+        }
+      } catch (error) {
+        alert("Error");
+      } finally {
+        setIsLoading(false);
+      }
+    }
+  };
 
   return (
     <div className="flex bg-blue-200 min-h-screen">
@@ -45,7 +68,7 @@ const TransactionDetails = () => {
                 <tbody>
                   {/* Render the Token List */}
                   {transfersList?.map((transfer, index) => (
-                    <tr key={1} className="hover:bg-slate-50">
+                    <tr key={index} className="hover:bg-slate-50">
                       <td className="p-4 border-b border-slate-200">
                         <p className="block text-sm text-slate-800">
                           {transfer.account}

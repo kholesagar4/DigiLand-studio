@@ -43,10 +43,10 @@ const Transactions = () => {
   ];
 
   useEffect(() => {
-    const getAccountId = localStorage.getItem("accountId");
-    handleCreateToken(getAccountId);
+    handleTransaction();
   }, []);
-  const handleCreateToken = async (accountId: string | null) => {
+  const handleTransaction = async () => {
+    const accountId = localStorage.getItem("accountId");
     setIsLoading(true);
     try {
       const body = {
@@ -72,8 +72,8 @@ const Transactions = () => {
     }
   };
 
-  const NavigationToScreen = (route: string, transfer: {}) => {
-    localStorage.setItem("transferList", JSON.stringify(transfer));
+  const NavigationToScreen = (route: string, transactionId: string) => {
+    localStorage.setItem("transferDetails", JSON.stringify(transactionId));
 
     // Navigate to the next page
     window.location.href = route;
@@ -125,7 +125,7 @@ const Transactions = () => {
                           onClick={() => {
                             NavigationToScreen(
                               "/transactionDetails",
-                              transaction.transfers
+                              transaction.transaction_id
                             );
                           }}
                           type="button"

@@ -60,7 +60,7 @@ const Dashboard = () => {
   // };
 
   useEffect(() => {
-    const getAccountId = localStorage.getItem("accountId");
+    const getAccountId: string | null = localStorage.getItem("accountId");
     handleCreateToken(getAccountId);
   }, []);
   const handleCreateToken = async (accountId: string | null) => {
@@ -95,8 +95,7 @@ const Dashboard = () => {
       tokenId: token_id,
     };
     // Set the tokenData
-    // localStorage.setItem("tokenData", JSON.stringify(tokenData));
-    localStorage.setItem("tokenData", token_id);
+    localStorage.setItem("tokenData", JSON.stringify(tokenData));
 
     // Navigate to the next page
     window.location.href = route;
