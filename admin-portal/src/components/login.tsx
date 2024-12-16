@@ -1,18 +1,22 @@
 import { useState } from "react";
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [accountId, setAccountId] = useState("");
 
-  const handleEmailChange = (e) => {
+  const handleAccountIdChange = (e: any) => {
     const value = e.target.value;
-    setEmail(value);
-    localStorage.setItem('email', value);
+    setAccountId(value);
+    localStorage.setItem('accountId', value);
+  };
+  
+  const handleLogin = () => {
+    if (accountId) {
+      window.location.href = "/dashboard";
+    } else {
+      alert("Incorrect information entered");
+    }
   };
 
-  const handleClick = () => {
-    window.location.href = '/dashboard';
-  }
-  
   return (
     <section className="min-h-screen gradient-form h-full bg-gradient-to-b from-green-200 via-green-100 to-beige-50">
       <div className="flex items-center justify-center h-full p-30">
@@ -40,19 +44,20 @@ const Login = () => {
                         data-twe-input-wrapper-init
                       >
                         <label
-                          htmlFor="username"
+                          htmlFor="accountId"
                           className="block mb-2 text-green-500"
-                          id="username"
+                          id="accountId"
                         >
-                          Username
+                          Account Id
                         </label>
                         <input
                           type="text"
                           className="block w-full rounded border border-green-300 bg-transparent px-3 py-3 leading-[1.6] outline-none transition-all duration-200 focus:border-green-500 focus:ring focus:ring-green-200 dark:text-white"
-                          id="username"
-                          placeholder="Enter your username"
-                          value={email}
-                          onChange={handleEmailChange}
+                          id="accountId"
+                          placeholder="Enter your account Id"
+                          value={accountId}
+                          required
+                          onChange={handleAccountIdChange}
                         />
                       </div>
 
@@ -79,7 +84,7 @@ const Login = () => {
                         <button
                           className="w-full rounded bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 text-sm font-medium uppercase leading-normal text-white shadow-md transition duration-150 ease-in-out hover:from-green-600 hover:to-green-700 focus:shadow-md"
                           type="button"
-                          onClick={() => handleClick()}
+                          onClick={() => handleLogin()}
                         >
                           Log in
                         </button>

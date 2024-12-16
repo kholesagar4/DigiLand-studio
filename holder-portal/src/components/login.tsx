@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 const LoginForm: React.FC = () => {
   const [accountId, setAccountId] = useState("");
-  const handleEmailChange = (e) => {
+  const handleAccountIdChange = (e: any) => {
     const value = e.target.value;
     setAccountId(value);
   };
@@ -45,12 +45,12 @@ const LoginForm: React.FC = () => {
             </svg>
             <input
               className="pl-2 outline-none focus:outline-none border-none w-full text-gray-700 focus:ring-2 focus:ring-white"
-              type="email"
-              name="email"
+              type="accountId"
+              name="accountId"
               placeholder="Account Id"
               required
               value={accountId}
-              onChange={handleEmailChange}
+              onChange={handleAccountIdChange}
             />
           </div>
 

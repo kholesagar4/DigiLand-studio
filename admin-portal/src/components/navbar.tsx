@@ -2,15 +2,12 @@ import { useEffect, useState } from "react";
 import { envConfig } from "../config/envConfig";
 
 const Navbar = () => {
-  const [email, setEmail] = useState<string | null>("");
   const [hederaAccountId, setHederaAccountId] = useState<string | null>("");
 
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const loggedInEmail = localStorage.getItem("email");
-      const loggedInHederaAccountId = `${envConfig.PUBLIC_HEDERA_ACCOUNT_ID}`;
-      setEmail(loggedInEmail);
-      setHederaAccountId(loggedInHederaAccountId);
+      const loggedInEmail = localStorage.getItem("accountId");
+      setHederaAccountId(loggedInEmail);
     }
   }, []);
 
@@ -50,7 +47,6 @@ const Navbar = () => {
           />
           <div>
             <p className="text-md font-semibold text-green-600">Admin Portal</p>
-            <p className="text-sm font-semibold text-green-500">{email}</p>
           </div>
         </div>
       </div>

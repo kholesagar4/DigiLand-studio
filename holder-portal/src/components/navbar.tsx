@@ -4,11 +4,10 @@ import { envConfig } from "../config/envConfig";
 const Navbar = () => {
   const [email, setEmail] = useState<string | null>("");
   const [hederaAccountId, setHederaAccountId] = useState<string | null>("");
+  
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const loggedInEmail = localStorage.getItem("email");
-      const loggedInHederaAccountId = `${envConfig.PUBLIC_HEDERA_ACCOUNT_ID}`;
-      setEmail(loggedInEmail);
+      const loggedInHederaAccountId = localStorage.getItem('accountId');
       setHederaAccountId(loggedInHederaAccountId);
     }
   }, []);
@@ -46,8 +45,7 @@ const Navbar = () => {
             className="w-10 h-10 rounded-full border border-blue-300"
           />
           <div>
-            <p className="text-sm font-semibold text-blue-600">Holder</p>
-            <p className="text-xs text-blue-500">{email}</p>
+            <p className="text-sm font-semibold text-blue-600">Holder Portal</p>
           </div>
         </div>
       </div>
