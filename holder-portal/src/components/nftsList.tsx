@@ -5,31 +5,23 @@ import { envConfig } from "../config/envConfig";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
 
-type Token = {
-  admin_key: {
-    _type: string; // Represents the type of key, e.g., "ECDSA_SECP256K1"
-    key: string; // The actual key value
-  };
-  metadata: string; // Metadata as a string
-  name: string; // Name of the token
-  symbol: string; // Symbol of the token
-  token_id: string; // Unique token identifier
-  type: "NON_FUNGIBLE_UNIQUE" | string; // Token type, default is "NON_FUNGIBLE_UNIQUE"
-  decimals: number; // Decimals (usually 0 for non-fungible tokens)
+type TokenEntry = {
+  account_id: string;
+  created_timestamp: string;
+  delegating_spender: string | null;
+  deleted: boolean;
+  metadata: string;
+  modified_timestamp: string;
+  serial_number: number;
+  spender: string | null;
+  token_id: string;
 };
 
 const NftsList = () => {
-  const [activeTab, setActiveTab] = useState("balance");
   const [isLoading, setIsLoading] = useState(false);
 
-  const [nftsList, setNftsList] = useState([]);
-  const Headers = [
-    "Token Id",
-    "Token Name",
-    "Token Symbol",
-    "Token Type",
-    "Action",
-  ];
+  const [nftsList, setNftsList] = useState<TokenEntry[]>([]);
+  const Headers = ["Token Id", "Serial Number", "Metadata", "Action"];
 
   useEffect(() => {
     getNfts();
@@ -48,7 +40,7 @@ const NftsList = () => {
       if (!response.data) {
         throw new Error("Error creating token");
       } else if (response?.status === HttpStatusCode.Ok) {
-        setNftsList(response.data.nfts);
+        setNftsList(response?.data?.nfts);
       }
     } catch (error) {
       alert("Error");
@@ -85,22 +77,17 @@ const NftsList = () => {
                     <tr key={index} className="hover:bg-slate-50">
                       <td className="p-4 border-b border-slate-200">
                         <p className="block text-sm text-slate-800">
-                          {"token.token_id"}
+                          {token?.token_id}
                         </p>
                       </td>
                       <td className="p-4 border-b border-slate-200">
                         <p className="block text-sm text-slate-800">
-                          {"token.name"}
+                          {token?.serial_number}
                         </p>
                       </td>
                       <td className="p-4 border-b border-slate-200">
                         <p className="block text-sm text-slate-800">
-                          {"token.symbol"}
-                        </p>
-                      </td>
-                      <td className="p-4 border-b border-slate-200">
-                        <p className="block text-sm text-slate-800">
-                          {"token.type"}
+                          {token.metadata}
                         </p>
                       </td>
 
