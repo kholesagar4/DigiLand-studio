@@ -7,38 +7,43 @@ import Sidebar from "./sidebar";
 
 type Token = {
   admin_key: {
-    _type: string; // Represents the type of key, e.g., "ECDSA_SECP256K1"
-    key: string; // The actual key value
+    _type: string; 
+    key: string; 
   };
-  metadata: string; // Metadata as a string
-  name: string; // Name of the token
-  symbol: string; // Symbol of the token
-  token_id: string; // Unique token identifier
-  type: "NON_FUNGIBLE_UNIQUE" | string; // Token type, default is "NON_FUNGIBLE_UNIQUE"
-  decimals: number; // Decimals (usually 0 for non-fungible tokens)
+  metadata: string; 
+  name: string; 
+  symbol: string; 
+  token_id: string; 
+  type: "NON_FUNGIBLE_UNIQUE" | string; 
+  decimals: number; 
+};
+
+type NFT = {
+  account_id: string,
+  created_timestamp: string,
+  delegating_spender: null,
+  deleted: boolean,
+  metadata: string,
+  serial_number: number,
+  spender: null,
+  token_id: string
 };
 
 const NftsList = () => {
   const [activeTab, setActiveTab] = useState("balance");
   const [isLoading, setIsLoading] = useState(false);
-
   const [nftsList, setNftsList] = useState([]);
-  const Headers = [
-    "Token Id",
-    "Token Name",
-    "Token Symbol",
-    "Token Type",
-    "Action",
-  ];
+  const Headers = ["Token Id", "serial No", "Created at", "Account Id"];
 
   useEffect(() => {
     getNfts();
   }, []);
+
   const getNfts = async () => {
     const getFromLocal = localStorage.getItem("tokenData");
     const parsedData = getFromLocal ? JSON.parse(getFromLocal) : null;
+    const token_id = parsedData?.tokenId; 
 
-    const token_id = parsedData.tokenId; // Access the token_id field
     setIsLoading(true);
     try {
       const response = await axios.get(
@@ -60,18 +65,19 @@ const NftsList = () => {
   return (
     <div className="flex bg-blue-200 min-h-screen">
       <Sidebar />
-
       <div className="flex-1 flex flex-col">
         <Navbar />
-
         <main className="flex-grow p-6">
           <div>
             <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
               <table className="w-full text-left table-auto min-w-max">
                 <thead>
                   <tr>
-                    {Headers.map((header) => (
-                      <th className="p-4 pt-7 pb-7 border-b border-slate-300 bg-slate-50">
+                    {Headers.map((header, index) => (
+                      <th 
+                        key={index} 
+                        className="p-4 pt-7 pb-7 border-b border-slate-300 bg-slate-50"
+                      >
                         <p className="block text-sm font-bold leading-none text-slate-500">
                           {header}
                         </p>
@@ -80,50 +86,44 @@ const NftsList = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* Render the Token List */}
-                  {nftsList?.map((token, index) => (
-                    <tr key={index} className="hover:bg-slate-50">
-                      <td className="p-4 border-b border-slate-200">
-                        <p className="block text-sm text-slate-800">
-                          {"token.token_id"}
-                        </p>
-                      </td>
-                      <td className="p-4 border-b border-slate-200">
-                        <p className="block text-sm text-slate-800">
-                          {"token.name"}
-                        </p>
-                      </td>
-                      <td className="p-4 border-b border-slate-200">
-                        <p className="block text-sm text-slate-800">
-                          {"token.symbol"}
-                        </p>
-                      </td>
-                      <td className="p-4 border-b border-slate-200">
-                        <p className="block text-sm text-slate-800">
-                          {"token.type"}
-                        </p>
-                      </td>
-
-                      <td className="p-4 border-b border-slate-200">
-                        <button
-                          onClick={() => {
-                            // Set the tokenData
-                            // const tokenData = {
-                            //   tokenId: token.token_id,
-                            // };
-                            // localStorage.setItem(
-                            //   "tokenData",
-                            //   JSON.stringify(tokenData)
-                            // );
-                          }}
-                          type="button"
-                          className="rounded border-2 border-blue-500 px-2 py-1 text-xs font-medium uppercase text-blue-600 transition duration-150 hover:border-blue-600 hover:bg-blue-50 hover:text-blue-700"
-                        >
-                          View
-                        </button>
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={Headers.length} className="p-4 text-center">
+                        Loading...
                       </td>
                     </tr>
-                  ))}
+                  ) : nftsList.length > 0 ? (
+                    nftsList.map((token: NFT, index) => (
+                      <tr key={index} className="hover:bg-slate-50">
+                        <td className="p-4 border-b border-slate-200">
+                          <p className="block text-sm text-slate-800">
+                            {token.token_id}
+                          </p>
+                        </td>
+                        <td className="p-4 border-b border-slate-200">
+                          <p className="block text-sm text-slate-800">
+                            {token.serial_number}
+                          </p>
+                        </td>
+                        <td className="p-4 border-b border-slate-200">
+                          <p className="block text-sm text-slate-800">
+                          {new Date(Number(token.created_timestamp) * 1000).toLocaleString()}                          
+                          </p>
+                        </td>
+                        <td className="p-4 border-b border-slate-200">
+                          <p className="block text-sm text-slate-800">
+                            {token.account_id}
+                          </p>
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={Headers.length} className="p-4 text-center text-slate-500">
+                        No NFTs found against this account
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
