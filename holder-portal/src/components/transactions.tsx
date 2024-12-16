@@ -34,7 +34,8 @@ type Transaction = {
 const Transactions = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [transactionList, setTransactionList] = useState<Transaction[]>([]);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 10;
   const Headers = [
     "Transaction Id",
     "Transaction Name",
@@ -51,7 +52,6 @@ const Transactions = () => {
     try {
       const body = {
         "account.id": accountId,
-        limit: 2,
         order: "desc",
         transactiontype: "cryptotransfer",
       };
@@ -78,6 +78,25 @@ const Transactions = () => {
     // Navigate to the next page
     window.location.href = route;
   };
+
+  const totalPages = Math.ceil(transactionList.length / recordsPerPage);
+  const paginatedTokens = transactionList.slice(
+    (currentPage - 1) * recordsPerPage,
+    currentPage * recordsPerPage
+  );
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
   return (
     <div className="flex bg-blue-200 min-h-screen">
       <Sidebar />
@@ -102,7 +121,7 @@ const Transactions = () => {
                 </thead>
                 <tbody>
                   {/* Render the Token List */}
-                  {transactionList?.map((transaction, index) => (
+                  {paginatedTokens?.map((transaction, index) => (
                     <tr key={1} className="hover:bg-slate-50">
                       <td className="p-4 border-b border-slate-200">
                         <p className="block text-sm text-slate-800">
@@ -138,6 +157,33 @@ const Transactions = () => {
                   ))}
                 </tbody>
               </table>
+
+              {/* Pagination Controls */}
+              <div className="flex justify-between items-center p-4">
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className={`px-4 py-2 bg-gray-200 rounded ${
+                    currentPage === 1 ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
+                >
+                  Previous
+                </button>
+                <p className="text-sm text-gray-600">
+                  Page {currentPage} of {totalPages}
+                </p>
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className={`px-4 py-2 bg-gray-200 rounded ${
+                    currentPage === totalPages
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         </main>

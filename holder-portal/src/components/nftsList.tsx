@@ -30,7 +30,6 @@ type NFT = {
 };
 
 const NftsList = () => {
-  const [activeTab, setActiveTab] = useState("balance");
   const [isLoading, setIsLoading] = useState(false);
   const [nftsList, setNftsList] = useState([]);
   const Headers = ["Token Id", "serial No", "Created at", "Account Id"];
@@ -53,7 +52,7 @@ const NftsList = () => {
       if (!response.data) {
         throw new Error("Error creating token");
       } else if (response?.status === HttpStatusCode.Ok) {
-        setNftsList(response.data.nfts);
+        setNftsList(response?.data?.nfts);
       }
     } catch (error) {
       alert("Error");
