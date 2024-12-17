@@ -39,6 +39,6 @@ jobs:
         with:
           project: "kholesagar4-digiland-st-15"
           entrypoint: "server/entry.mjs"
-          root: "dist"
+          root: "/holder-portal/dist"
           
           
