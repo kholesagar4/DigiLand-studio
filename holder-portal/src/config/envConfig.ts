@@ -1,0 +1,6 @@
+const { PUBLIC_BASE_URL, PUBLIC_HEDERA_ACCOUNT_ID }: any = globalThis
+
+export const envConfig = {
+  PUBLIC_BASE_URL: PUBLIC_BASE_URL || import.meta.env.PUBLIC_BASE_URL,
+  PUBLIC_HEDERA_ACCOUNT_ID: PUBLIC_HEDERA_ACCOUNT_ID || import.meta.env.PUBLIC_HEDERA_ACCOUNT_ID
+};
